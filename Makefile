@@ -11,8 +11,7 @@ AS	=as
 LD	=ld
 LDFLAGS	=-s -x -M
 CC	=gcc $(RAMDISK)
-CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer \
--fcombine-regs -mstring-insns
+CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer 
 CPP	=cpp -nostdinc -Iinclude
 
 #
