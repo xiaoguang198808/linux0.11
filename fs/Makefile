@@ -2,7 +2,7 @@ AR	=ar
 AS	=as
 CC	=gcc
 LD	=ld
-CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer \
+CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer -fno-stack-protector \
 	 -nostdinc -I../include
 CPP	=gcc -E -nostdinc -I../include
 
@@ -20,7 +20,7 @@ OBJS=	open.o read_write.o inode.o file_table.o buffer.o super.o \
 	bitmap.o fcntl.o ioctl.o truncate.o
 
 fs.o: $(OBJS)
-	$(LD) -r -o fs.o $(OBJS)
+	$(LD) -r -m elf_i386 -o fs.o $(OBJS)
 
 clean:
 	rm -f core *.o *.a tmp_make

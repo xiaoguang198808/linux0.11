@@ -11,7 +11,7 @@ AS	=as
 LD	=ld
 LDFLAGS	=-s -x
 CC	=gcc
-CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer \
+CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer -fno-stack-protector \
 	-finline-functions -nostdinc -I../../include
 CPP	=gcc -E -nostdinc -I../../include
 

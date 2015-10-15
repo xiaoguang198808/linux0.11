@@ -12,7 +12,7 @@ LD	=ld
 LDFLAGS	=-s -x
 CC	=gcc
 CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer \
-	-finline-functions -nostdinc -I../include
+	-finline-functions  -fno-stack-protector -nostdinc -I../include
 CPP	=gcc -E -nostdinc -I../include
 
 .c.s:
@@ -29,7 +29,7 @@ OBJS  = sched.o system_call.o traps.o asm.o fork.o \
 	signal.o mktime.o
 
 kernel.o: $(OBJS)
-	$(LD) -r -o kernel.o $(OBJS)
+	$(LD) -r -m elf_i386 -o kernel.o $(OBJS)
 	sync
 
 clean:

@@ -9,9 +9,9 @@ LD86	=ld86 -0
 
 AS	=as
 LD	=ld
-LDFLAGS	=-s -x -M
+LDFLAGS	=-m elf_i386 -Ttext 0 -e startup_32
 CC	=gcc $(RAMDISK)
-CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer 
+CFLAGS	=-Wall -O -m32 -fstrength-reduce -fomit-frame-pointer -fno-stack-protector 
 CPP	=cpp -nostdinc -Iinclude
 
 #
@@ -19,7 +19,7 @@ CPP	=cpp -nostdinc -Iinclude
 # This can be either FLOPPY, /dev/xxxx or empty, in which case the
 # default of /dev/hd6 is used by 'build'.
 #
-ROOT_DEV=/dev/hd6
+ROOT_DEV=
 
 ARCHIVES=kernel/kernel.o mm/mm.o fs/fs.o
 DRIVERS =kernel/blk_drv/blk_drv.a kernel/chr_drv/chr_drv.a
@@ -38,8 +38,12 @@ LIBS	=lib/lib.a
 all:	Image
 
 Image: boot/bootsect boot/setup tools/system tools/build
-	tools/build boot/bootsect boot/setup tools/system $(ROOT_DEV) > Image
+	objcopy -O binary -R .note -R .comment tools/system tools/kernel
+	tools/build boot/bootsect boot/setup tools/kernel $(ROOT_DEV) > Image
+	rm tools/kernel -f
 	sync
+#	tools/build boot/bootsect boot/setup tools/system $(ROOT_DEV) > Image
+#	sync
 
 disk: Image
 	dd bs=8192 if=Image of=/dev/PS0
@@ -57,7 +61,8 @@ tools/system:	boot/head.o init/main.o \
 	$(DRIVERS) \
 	$(MATH) \
 	$(LIBS) \
-	-o tools/system > System.map
+	-o tools/system 
+	nm tools/system | grep -v '\(compiled\)\|\(\.o$$\)\|\( [aU] \)\|\(\.\.ng$$\)\|\(LASH[RL]DI\)'| sort > System.map
 
 kernel/math/math.a:
 	(cd kernel/math; make)
